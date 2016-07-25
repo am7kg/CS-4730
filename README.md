@@ -3,6 +3,8 @@ Lab 6 Engine : CS 4730
 
 Lab 6 engine is located inside the lab1 folder
 
+View the ReadMe in raw from for clarity
+
 =====================================================================================================
 
 Notes from class: 25 / 7 / 2016
