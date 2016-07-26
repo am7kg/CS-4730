@@ -23,7 +23,7 @@ import edu.virginia.engine.tweening.TweenJuggler;
  * Highest level class for creating a game in Java.
  * 
  * */
-public class Game extends DisplayObjectContainer implements ActionListener, KeyListener {
+public class Game extends DisplayObjectContainer implements ActionListener, MouseListener, KeyListener {
 
 	/* Frames per second this game runs at */
 	private int FRAMES_PER_SEC = 60;
@@ -68,6 +68,7 @@ public class Game extends DisplayObjectContainer implements ActionListener, KeyL
 			}
 		});
 		getMainFrame().addKeyListener(this);
+		getMainFrame().addMouseListener(this);
 	}
 
 	/**
@@ -198,6 +199,41 @@ public class Game extends DisplayObjectContainer implements ActionListener, KeyL
 
 	@Override
 	public void keyTyped(KeyEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+
+	@Override
+	public void mouseClicked(MouseEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+
+	@Override
+	public void mousePressed(MouseEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+
+	@Override
+	public void mouseReleased(MouseEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+
+	@Override
+	public void mouseEntered(MouseEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+
+	@Override
+	public void mouseExited(MouseEvent e) {
 		// TODO Auto-generated method stub
 		
 	}

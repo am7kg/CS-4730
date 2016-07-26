@@ -24,4 +24,8 @@ public class Sprite extends DisplayObjectContainer {
 	public void update(ArrayList<String> pressedKeys) {
 		super.update(pressedKeys);
 	}
+
+	public void Pop(){
+		
+	}
 }
