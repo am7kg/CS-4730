@@ -1,11 +1,13 @@
 package edu.virginia.lab1test;
 
 import java.awt.Graphics;
+import java.awt.Rectangle;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.util.ArrayList;
 
+import edu.virginia.engine.display.AnimatedSprite;
 import edu.virginia.engine.display.BlobSprite;
 import edu.virginia.engine.display.Game;
 import edu.virginia.engine.display.ItemSprite;
@@ -32,15 +34,21 @@ public class BlobsOnlyJob extends Game implements MouseListener {
 	BlobSprite Blob = new BlobSprite("Blob", "blob1.png");
 	ItemSprite Phone = new ItemSprite("Phone","phone.png", "phone_pickup_event.png");
 	ItemSprite Brush = new ItemSprite("Brush", "brush.jpeg","phone_pickup_event.png");
-	Sprite Hodor = new Sprite("Hodor", "hodor.png");
 	
 	PopupManager Pops = new PopupManager();
+	
+	Rectangle a = new Rectangle(200, 200, 300 , 300 );
+
 	
 	int n = 0;
 	int frame = 1;
 	
 	ArrayList<ItemSprite> ItemList = new ArrayList<ItemSprite>();
 	
+	boolean paintMode = false;
+	
+	int MouseX;
+	int MouseY;
 	
 	SoundManager mSM = new SoundManager();
 	
@@ -49,8 +57,9 @@ public class BlobsOnlyJob extends Game implements MouseListener {
 	
 	public void update(ArrayList<String> pressedKeys) {
 		super.update(pressedKeys);
-		if ( frame == 1 )
-			Hodor.setVisible(false);
+		if ( frame == 1 ) {
+			
+		}
 		
 		if ( Blob != null && Phone != null && Brush != null && ItemList != null ) { 
 		
@@ -86,9 +95,8 @@ public class BlobsOnlyJob extends Game implements MouseListener {
 		if ( Blob.collidesWith(Brush) ){
 			for ( ItemSprite i : ItemList )
 				i.setVisible(false);
-			Blob.setPosition(100,100);
-			Hodor.setVisible(true);
-			Hodor.setPosition(300, 300);
+			Blob.setPosition(300,0);
+			paintMode = true;
 		}
 			
 		
@@ -105,14 +113,23 @@ public class BlobsOnlyJob extends Game implements MouseListener {
 		super.draw(g);
 		
 		// if not null draw blob and the sprites
-		if ( Blob != null && Phone != null && Brush != null ){
+		if ( Blob != null && Phone != null && Brush != null && a != null ){
 			Blob.draw(g);
 			Phone.draw(g);
 			Brush.draw(g);
-			Hodor.draw(g);
-		}
+			if ( paintMode ) {
+				g.drawRect(a.x, a.y, a.width, a.height);
+				if ( a.contains(MouseX, MouseY) )  
+					g.fillRect(a.x, a.y, a.width, a.height);
+				g.drawString("Blob's House", 350, 350);
+				}
+			}
+		
+			// Just fill in rectangle Homework Tonight
+			
 		
 	}
+	
 
 	@Override
 	public void mouseClicked(MouseEvent e) {
@@ -130,6 +147,11 @@ public class BlobsOnlyJob extends Game implements MouseListener {
 
 	@Override
 	public void mouseReleased(MouseEvent e) {
+		if ( paintMode ) {
+			MouseX = e.getX();
+			MouseY = e.getY();
+		}
+		else{
 		for ( ItemSprite i : ItemList ) {
 			 if ( i.getGlobalHitBox().contains(e.getX(), e.getY() - 25) ) {
 				 if ( i.getId() == "Phone") {
@@ -147,6 +169,8 @@ public class BlobsOnlyJob extends Game implements MouseListener {
 			if ( n == 1001 ) System.out.println("JESUS CHRIST");
 			n++;
 		}
+		}
+		
 	}
 
 	@Override
