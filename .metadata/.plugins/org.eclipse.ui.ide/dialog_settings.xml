@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<section name="Workbench">
+	<list key="installedFeatures">
+		<item value="com.android.ide.eclipse.adt.package.feature:23.0.2.1259578"/>
+		<item value="org.eclipse.cdt.gdb:7.0.0.201202111925"/>
+		<item value="org.eclipse.cdt:8.0.2.201202111925"/>
+		<item value="org.eclipse.egit.import:2.2.0.201212191850-r"/>
+		<item value="org.eclipse.egit:2.2.0.201212191850-r"/>
+		<item value="org.eclipse.emf.common:2.11.0.v20150512-0501"/>
+		<item value="org.eclipse.emf.ecore:2.11.0.v20150512-0501"/>
+		<item value="org.eclipse.help:2.1.0.v20150603-2000"/>
+		<item value="org.eclipse.jgit:2.2.0.201212191850-r"/>
+		<item value="org.eclipse.platform:4.5.0.v20150603-2358"/>
+		<item value="org.eclipse.rcp:4.5.0.v20150603-2331"/>
+	</list>
+</section>
