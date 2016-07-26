@@ -1,4 +1,4 @@
-package edu.virginia.BlobsOnlyJob;
+package edu.virginia.lab1test;
 
 import java.awt.Graphics;
 import java.awt.event.KeyEvent;
@@ -6,7 +6,9 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.util.ArrayList;
 
+import edu.virginia.engine.display.BlobSprite;
 import edu.virginia.engine.display.Game;
+import edu.virginia.engine.display.ItemSprite;
 import edu.virginia.engine.sound.SoundManager;
 import edu.virginia.engine.util.GameClock;
 
@@ -24,8 +26,14 @@ public class BlobsOnlyJob extends Game implements MouseListener {
 	
 	// Sprites
 	
-	//BlobSprite Blob = new BlobSprite("Blob", "blob.png");
-	//ItemSprite Phone = new ItemSprite("Phone","phone.png");
+	BlobSprite Blob = new BlobSprite("Blob", "blob1.png");
+	ItemSprite Phone = new ItemSprite("Phone","phone.png");
+	ItemSprite Brush = new ItemSprite("Brush", "brush.jpeg");
+	
+	int n = 0;
+	
+	
+	ArrayList<ItemSprite> ItemList = new ArrayList<ItemSprite>();
 	
 	
 	SoundManager mSM = new SoundManager();
@@ -36,15 +44,34 @@ public class BlobsOnlyJob extends Game implements MouseListener {
 	public void update(ArrayList<String> pressedKeys) {
 		super.update(pressedKeys);
 		
+		if ( Blob != null && Phone != null && Brush != null ) { 
+		
 		// if blob is not null
 		
-		if ( KeyEvent.getKeyText(KeyEvent.VK_UP) != null) {};
-		if ( KeyEvent.getKeyText(KeyEvent.VK_DOWN) != null) {};
-		if ( KeyEvent.getKeyText(KeyEvent.VK_RIGHT) != null) {};
-		if ( KeyEvent.getKeyText(KeyEvent.VK_LEFT) != null) {};
+		if ( pressedKeys.contains(KeyEvent.getKeyText(KeyEvent.VK_UP))) 
+			Blob.getPosition().translate(0, -5);
+		if ( pressedKeys.contains(KeyEvent.getKeyText(KeyEvent.VK_DOWN)))
+			Blob.getPosition().translate(0, 5);
+		if ( pressedKeys.contains(KeyEvent.getKeyText(KeyEvent.VK_RIGHT)))
+			Blob.getPosition().translate(5, 0);
+		if ( pressedKeys.contains(KeyEvent.getKeyText(KeyEvent.VK_LEFT)))
+			Blob.getPosition().translate(-5, 0);
+
+		// Add visible items to the ItemList
+		if ( Phone.isVisible() && !ItemList.contains(Phone))
+			ItemList.add(Phone);
 		
+		Phone.setPosition(100, 100);
+		
+		if ( Brush.isVisible() && !ItemList.contains(Brush))
+			ItemList.add(Brush);
+		
+		Brush.setPosition(300, 300);
 		
 		//Game Over
+		if ( pressedKeys.contains("J"))
+			this.exitGame();
+		}
 
 	}
 	
@@ -52,11 +79,18 @@ public class BlobsOnlyJob extends Game implements MouseListener {
 		super.draw(g);
 		
 		// if not null draw blob and the sprites
+		if ( Blob != null && Phone != null && Brush != null ){
+			Blob.draw(g);
+			Phone.draw(g);
+			Brush.draw(g);
+		}
+		
 	}
 
 	@Override
 	public void mouseClicked(MouseEvent e) {
 		// TODO Auto-generated method stub
+		
 		
 	}
 
@@ -64,14 +98,26 @@ public class BlobsOnlyJob extends Game implements MouseListener {
 	public void mousePressed(MouseEvent e) {
 		// TODO Auto-generated method stub
 		
+		
 	}
 
 	@Override
 	public void mouseReleased(MouseEvent e) {
-		for (ItemSprite : ItemList) {
-			if ( i.getPosition)
+		for ( ItemSprite i : ItemList ) {
+			 if ( i.getGlobalHitBox().contains(e.getX(), e.getY() - 25) ) {
+				 if ( i.getId() == "Phone")
+					 System.out.println("You clicked the Phone");
+				 if ( i.getId() == "Brush")
+					 System.out.println("You clicked the Brush");
+				 }	
 		}
-		
+		if ( Blob.getGlobalHitBox().contains(e.getX(), e.getY() - 25 ) ){
+			if ( n < 20) System.out.println("chill bro");
+			if ( n > 20 && n < 100 ) System.out.println("please stop");
+			if ( n > 100 && n < 1000 ) System.out.println("clicking on me doesn't do anything!!");
+			if ( n == 1001 ) System.out.println("JESUS CHRIST");
+			n++;
+		}
 	}
 
 	@Override
