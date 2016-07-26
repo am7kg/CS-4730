@@ -1,4 +1,4 @@
-package edu.virginia.BlobsOnlyJob;
+package edu.virginia.lab1test;
 
 import java.awt.Graphics;
 import java.awt.event.KeyEvent;
@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import edu.virginia.engine.display.BlobSprite;
 import edu.virginia.engine.display.Game;
 import edu.virginia.engine.display.ItemSprite;
+import edu.virginia.engine.display.Sprite;
 import edu.virginia.engine.sound.SoundManager;
 import edu.virginia.engine.util.GameClock;
 import edu.virginia.enginge.events.PopupEvent;
@@ -19,7 +20,6 @@ public class BlobsOnlyJob extends Game implements MouseListener {
 	public BlobsOnlyJob() {
 		super("Blob's Only Job", 500, 500);
 		// TODO Auto-generated constructor stub
-	
 	}
 	
 	public static void main(String[] args) {
@@ -31,10 +31,13 @@ public class BlobsOnlyJob extends Game implements MouseListener {
 	
 	BlobSprite Blob = new BlobSprite("Blob", "blob1.png");
 	ItemSprite Phone = new ItemSprite("Phone","phone.png", "phone_pickup_event.png");
-	ItemSprite Brush = new ItemSprite("Brush", "brush.png","phone_pickup_event.png");
+	ItemSprite Brush = new ItemSprite("Brush", "brush.jpeg","phone_pickup_event.png");
+	Sprite Hodor = new Sprite("Hodor", "hodor.png");
+	
 	PopupManager Pops = new PopupManager();
 	
-	
+	int n = 0;
+	int frame = 1;
 	
 	ArrayList<ItemSprite> ItemList = new ArrayList<ItemSprite>();
 	
@@ -46,8 +49,10 @@ public class BlobsOnlyJob extends Game implements MouseListener {
 	
 	public void update(ArrayList<String> pressedKeys) {
 		super.update(pressedKeys);
+		if ( frame == 1 )
+			Hodor.setVisible(false);
 		
-		if ( Blob != null && Phone != null && Brush != null ) { 
+		if ( Blob != null && Phone != null && Brush != null && ItemList != null ) { 
 		
 		// if blob is not null
 		
@@ -59,7 +64,7 @@ public class BlobsOnlyJob extends Game implements MouseListener {
 			Blob.getPosition().translate(5, 0);
 		if ( pressedKeys.contains(KeyEvent.getKeyText(KeyEvent.VK_LEFT)))
 			Blob.getPosition().translate(-5, 0);
-
+		
 		// Add visible items to the ItemList
 		if ( Phone.isVisible() && !ItemList.contains(Phone))
 			ItemList.add(Phone);
@@ -71,13 +76,29 @@ public class BlobsOnlyJob extends Game implements MouseListener {
 		
 		Brush.setPosition(300, 300);
 		
+		// Event Listener
 		Phone.addEventListener(Pops, PopupEvent.PHONE_PICKUP);
+		
+		
+		//After you accept event, part of screen lights up
+		//If Blob collides with light, teleport to new area
+		
+		if ( Blob.collidesWith(Brush) ){
+			for ( ItemSprite i : ItemList )
+				i.setVisible(false);
+			Blob.setPosition(100,100);
+			Hodor.setVisible(true);
+			Hodor.setPosition(300, 300);
+		}
+			
 		
 		//Game Over
 		if ( pressedKeys.contains("J"))
 			this.exitGame();
 		}
 
+		
+		frame++;
 	}
 	
 	public void draw(Graphics g){
@@ -88,6 +109,7 @@ public class BlobsOnlyJob extends Game implements MouseListener {
 			Blob.draw(g);
 			Phone.draw(g);
 			Brush.draw(g);
+			Hodor.draw(g);
 		}
 		
 	}
@@ -110,16 +132,21 @@ public class BlobsOnlyJob extends Game implements MouseListener {
 	public void mouseReleased(MouseEvent e) {
 		for ( ItemSprite i : ItemList ) {
 			 if ( i.getGlobalHitBox().contains(e.getX(), e.getY() - 25) ) {
-				 if ( i.getId() == "Phone"){
+				 if ( i.getId() == "Phone") {
 					 System.out.println("You clicked the Phone");
-					 i.dispatchEvent( new PopupEvent(PopupEvent.PHONE_PICKUP,i));
+					 i.dispatchEvent(new PopupEvent(PopupEvent.PHONE_PICKUP,i));
 				 }
 				 if ( i.getId() == "Brush")
 					 System.out.println("You clicked the Brush");
 				 }	
 		}
-		if ( Blob.getGlobalHitBox().contains(e.getX(), e.getY() - 25 ) )
-			System.out.println("chill bro");
+		if ( Blob.getGlobalHitBox().contains(e.getX(), e.getY() - 25 ) ){
+			if ( n < 20) System.out.println("chill bro");
+			if ( n > 20 && n < 100 ) System.out.println("please stop");
+			if ( n > 100 && n < 1000 ) System.out.println("clicking on me doesn't do anything!!");
+			if ( n == 1001 ) System.out.println("JESUS CHRIST");
+			n++;
+		}
 	}
 
 	@Override
