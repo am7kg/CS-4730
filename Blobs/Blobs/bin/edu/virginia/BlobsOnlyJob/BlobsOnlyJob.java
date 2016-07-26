@@ -67,6 +67,8 @@ public class BlobsOnlyJob extends Game implements MouseListener {
 		Brush.setPosition(300, 300);
 		
 		//Game Over
+		if ( pressedKeys.contains("J"))
+			this.exitGame();
 		}
 
 	}
@@ -101,9 +103,14 @@ public class BlobsOnlyJob extends Game implements MouseListener {
 	public void mouseReleased(MouseEvent e) {
 		for ( ItemSprite i : ItemList ) {
 			 if ( i.getGlobalHitBox().contains(e.getX(), e.getY() - 25) ) {
-				 System.out.println("sdfkjhaskjfhasjhdf");
-			}	
+				 if ( i.getId() == "Phone")
+					 System.out.println("You clicked the Phone");
+				 if ( i.getId() == "Brush")
+					 System.out.println("You clicked the Brush");
+				 }	
 		}
+		if ( Blob.getGlobalHitBox().contains(e.getX(), e.getY() - 25 ) )
+			System.out.println("chill bro");
 	}
 
 	@Override
