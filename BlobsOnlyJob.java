@@ -1,4 +1,4 @@
-package edu.virginia.lab1test;
+package edu.virginia.BlobsOnlyJob;
 
 import java.awt.Graphics;
 import java.awt.Rectangle;
@@ -9,10 +9,12 @@ import java.util.ArrayList;
 
 import edu.virginia.engine.display.BlobSprite;
 import edu.virginia.engine.display.DisplayBox;
+import edu.virginia.engine.display.DistractionSprite;
 import edu.virginia.engine.display.Game;
 import edu.virginia.engine.display.ItemSprite;
 import edu.virginia.engine.sound.SoundManager;
 import edu.virginia.engine.util.GameClock;
+import edu.virginia.enginge.events.DistractionEvent;
 import edu.virginia.enginge.events.PopupEvent;
 
 public class BlobsOnlyJob extends Game implements MouseListener {
@@ -45,10 +47,12 @@ public class BlobsOnlyJob extends Game implements MouseListener {
 	BlobSprite Blob = new BlobSprite("Blob", "blob1.png");
 
 	ItemSprite Phone = new ItemSprite("Phone","phone.png");
-	ItemSprite Brush = new ItemSprite("Brush", "brush.jpeg");
+	ItemSprite Brush = new ItemSprite("Brush", "brush.png");
 	
 	DisplayBox Phone_Pickup = new DisplayBox("Phone_Pickup", "phone_pickup_event.png");
 	DisplayBox Brush_Pickup = new DisplayBox("Brush_Pickup", "brush_first_event.png");
+	
+	DistractionSprite heyListen = new DistractionSprite("heyListen");
 	
 	private static ArrayList<String> brushes = new ArrayList<String>();
 
@@ -107,8 +111,12 @@ public class BlobsOnlyJob extends Game implements MouseListener {
 		if ( Brush_Pickup.isVisible() && !ItemList.contains(Brush_Pickup))
 			ItemList.add(Brush_Pickup);
 		
+		if ( heyListen.isVisible() && !ItemList.contains(heyListen))
+			ItemList.add(heyListen);
 		
-		Phone_Pickup.setPosition(100,150);		
+		
+		Phone_Pickup.setPosition(100,150);
+		
 		
 		Phone.addEventListener(Phone_Pickup, PopupEvent.PHONE_PICKUP);
 		
@@ -123,6 +131,11 @@ public class BlobsOnlyJob extends Game implements MouseListener {
 		Brush.addEventListener(Brush_Pickup, PopupEvent.BRUSH_FIFTH);
 		
 		Brush_Pickup.addEventListener(Brush_Pickup, PopupEvent.BRUSH_CLOSE);
+		Brush_Pickup.addEventListener(heyListen, DistractionEvent.PHONE_ARROW);
+		
+		
+		
+		
 		
 		if ( Blob.collidesWith(Brush) ){
 			for ( ItemSprite i : ItemList )
@@ -150,12 +163,13 @@ public class BlobsOnlyJob extends Game implements MouseListener {
 		super.draw(g);
 		
 		// if not null draw blob and the sprites
-		if ( Blob != null && Phone != null && Brush != null ){
+		if ( Blob != null && Phone != null && Brush != null  && Phone_Pickup != null && Brush_Pickup != null && heyListen != null){
 			Blob.draw(g);
 			Phone.draw(g);
 			Brush.draw(g);
 			Phone_Pickup.draw(g);
 			Brush_Pickup.draw(g);
+			heyListen.draw(g);
 		}
 		if ( gameMode == 1 ) {
 			g.drawRect(a.x, a.y, a.width, a.height);
@@ -194,6 +208,7 @@ public class BlobsOnlyJob extends Game implements MouseListener {
 		else{
 		for ( ItemSprite i : ItemList ) {
 			 if ( i.getGlobalHitBox().contains(e.getX(), e.getY() - 25) ) {
+				 heyListen.setVisible(false);
 				 if ( i.getId() == "Phone" && !popupMode){
 					 System.out.println("You clicked the Phone");
 					 i.dispatchEvent( new PopupEvent(PopupEvent.PHONE_PICKUP,i));
@@ -213,6 +228,12 @@ public class BlobsOnlyJob extends Game implements MouseListener {
 				 }
 				 if ( i.getId() == "Brush_Pickup"){
 					 i.dispatchEvent( new PopupEvent(PopupEvent.BRUSH_CLOSE,i));
+					 if(disCount == 1){
+						 System.out.println("dispatch zone");
+						 i.dispatchEvent( 
+						new DistractionEvent(
+						DistractionSprite.PHONE_ARROW,i,Phone.getPosition().getX()-30,Phone.getPosition().getY()));
+					 }
 					 System.out.println("Brush_Popup was clicked");
 					 Remover.add(i);
 					 popupMode = false;
