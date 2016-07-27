@@ -39,13 +39,16 @@ public class BlobsOnlyJob extends Game implements MouseListener {
 	
 	Rectangle a = new Rectangle(200, 200, 300 , 300 );
 
-	
+	int b = 0;
 	int n = 0;
 	int frame = 1;
 	
 	ArrayList<ItemSprite> ItemList = new ArrayList<ItemSprite>();
 	
-	boolean paintMode = false;
+	//boolean paintMode = false;
+	//boolean barMode = false;
+	
+	int gameMode = 0;
 	
 	int MouseX;
 	int MouseY;
@@ -58,7 +61,6 @@ public class BlobsOnlyJob extends Game implements MouseListener {
 	public void update(ArrayList<String> pressedKeys) {
 		super.update(pressedKeys);
 		if ( frame == 1 ) {
-			
 		}
 		
 		if ( Blob != null && Phone != null && Brush != null && ItemList != null ) { 
@@ -96,7 +98,14 @@ public class BlobsOnlyJob extends Game implements MouseListener {
 			for ( ItemSprite i : ItemList )
 				i.setVisible(false);
 			Blob.setPosition(300,0);
-			paintMode = true;
+			gameMode = 1;
+		}
+		
+		if ( Blob.collidesWith(Phone) ){
+			for ( ItemSprite i : ItemList )
+				i.setVisible(false);
+			Blob.setPosition(200,400);
+			gameMode = 2;
 		}
 			
 		
@@ -117,16 +126,18 @@ public class BlobsOnlyJob extends Game implements MouseListener {
 			Blob.draw(g);
 			Phone.draw(g);
 			Brush.draw(g);
-			if ( paintMode ) {
+			if ( gameMode == 1 ) {
 				g.drawRect(a.x, a.y, a.width, a.height);
 				if ( a.contains(MouseX, MouseY) )  
 					g.fillRect(a.x, a.y, a.width, a.height);
 				g.drawString("Blob's House", 350, 350);
 				}
+			if ( gameMode == 2 ) {
+				g.drawRect(150, 0, 300, 150);
+				g.drawString("Bar", 300, 50 );
 			}
-		
-			// Just fill in rectangle Homework Tonight
-			
+			}
+					
 		
 	}
 	
@@ -147,7 +158,7 @@ public class BlobsOnlyJob extends Game implements MouseListener {
 
 	@Override
 	public void mouseReleased(MouseEvent e) {
-		if ( paintMode ) {
+		if ( gameMode == 1 ) {
 			MouseX = e.getX();
 			MouseY = e.getY();
 		}
