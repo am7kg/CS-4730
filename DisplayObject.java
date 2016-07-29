@@ -37,6 +37,9 @@ public class DisplayObject extends EventDispatcher  {
 	//private Queue<DisplayObject> frames = new LinkedList<DisplayObject>();
 	protected int totalFrames;
 	
+	//image file name (added)
+	protected String fileName;
+	
 	//additional fields
 	boolean visible = true;
 	float alpha = 1.0f;
@@ -65,11 +68,13 @@ public class DisplayObject extends EventDispatcher  {
 
 	public DisplayObject(String id, String fileName) {
 		this.setId(id);
+		this.fileName = fileName;
 		this.setImage(fileName);
 	}
 	
 	public DisplayObject(String id, String fileName, DisplayObject parent){
 		this.setId(id);
+		this.fileName = fileName;
 		this.setImage(fileName);
 		this.setParent(parent);
 	}
@@ -120,6 +125,10 @@ public class DisplayObject extends EventDispatcher  {
 		}
 	}
 
+	//added
+	public String getImageFileName(){
+		return this.fileName;
+	}
 
 	/**
 	 * Helper function that simply reads an image from the given image name
