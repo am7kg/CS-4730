@@ -1,4 +1,4 @@
-package edu.virginia.lab1test;
+package edu.virginia.BlobsOnlyJob;
 
 import java.awt.Graphics;
 import java.awt.Rectangle;
@@ -7,41 +7,51 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.util.ArrayList;
 
+import edu.virginia.engine.display.BedRoom;
 import edu.virginia.engine.display.BlobSprite;
 import edu.virginia.engine.display.DisplayBox;
+import edu.virginia.engine.display.DisplayObject;
 import edu.virginia.engine.display.DistractionSprite;
 import edu.virginia.engine.display.Game;
 import edu.virginia.engine.display.HouseSprite;
+import edu.virginia.engine.display.Inventory;
 import edu.virginia.engine.display.ItemSprite;
 import edu.virginia.engine.sound.SoundManager;
 import edu.virginia.engine.util.GameClock;
 import edu.virginia.enginge.events.DistractionEvent;
+import edu.virginia.enginge.events.Event;
 import edu.virginia.enginge.events.PopupEvent;
-
 
 /**
  * 
  * @author alicheraghpour
- * 4/30/16
- * Version 1.02 (Alpha)
+ * 4/28/16
+ * Version 1.01 (Alpha)
  * 
- * Almost done, just waiting for other functionality to start designing the levels,
- * finishing the bed function and the house minigame.
+ * Not finished with all of the tasks that we assigned in class today.
+ * Changes in: BlobsOnlyJob.java, HouseSprite.java, DisplayObject.java
+ * Resources: painted_house.png, unpainted_house.png
  * 
- * Changes in: BlobsOnlyJob.java
+ * Blob now travels by touching the end of the screen. This will change the gameMode
+ * thus drawing new things on the screen. Going left takes him to the bar (for now)
+ * and going down takes him outside his house to the mini game. Right now going left
+ * or down on any screen will take you to those screens. I will fix that in the next
+ * patch.
  * 
- * Instead of creating new classes for the different screens, I just use a gameMode int
- * and the draw method will draw different things to the screen depending on
- * what the gameMode is. 0 is inside, 1 is outside, 2 is bar etc. etc.
+ * Started the implementation of the HouseSprite mechanic, you should be able to
+ * go outside the house and click on Mr. Bean to change his image. Made a new class 
+ * for this called HouseSprite.java.
  * 
- * Blob now transitions back and forth between the maps.
+ * Lastly I added the bed function. For now, the bed is spawned in the beginning and
+ * when Blob collides with it the game ends and we see a game over message for beating
+ * the game. This changes the gameMode int to 7.
+ * 
+ * That's it for tonight, I'm exhausted.
  *
  */
 
 public class BlobsOnlyJob extends Game implements MouseListener {
 
-	
-	
 	public BlobsOnlyJob() {
 		super("Blob's Only Job", 500, 500);
 		// TODO Auto-generated constructor stub
@@ -50,6 +60,13 @@ public class BlobsOnlyJob extends Game implements MouseListener {
 		brushes.add(2, PopupEvent.BRUSH_THIRD);
 		brushes.add(3,PopupEvent.BRUSH_FOURTH);
 		brushes.add(4,PopupEvent.BRUSH_FIFTH);
+		
+		inventory.addItem(art);
+		inventory.addItem(pint);
+		inventory.addItem(videoGame);
+		inventory.setVisible(false);
+		
+		bedroom.addEventListener(bedroom, bedroom.CLEAN_MESS);
 	
 	}
 	
@@ -68,13 +85,13 @@ public class BlobsOnlyJob extends Game implements MouseListener {
 	BlobSprite Blob = new BlobSprite("Blob", "blob1.png");
 
 	ItemSprite Phone = new ItemSprite("Phone","phone.png");
-	ItemSprite Brush = new ItemSprite("Brush", "brush.jpeg");
+	ItemSprite Brush = new ItemSprite("Brush", "brush.png");
 	ItemSprite Bed = new ItemSprite("Bed", "bed.png");
 	
 	DisplayBox Phone_Pickup = new DisplayBox("Phone_Pickup", "phone_pickup_event.png");
 	DisplayBox Brush_Pickup = new DisplayBox("Brush_Pickup", "brush_first_event.png");
 	
-	DistractionSprite heyListen = new DistractionSprite("heyListen","right_arrow.png");
+	DistractionSprite heyListen = new DistractionSprite("heyListen");
 	
 	private static ArrayList<String> brushes = new ArrayList<String>();
 
@@ -92,9 +109,7 @@ public class BlobsOnlyJob extends Game implements MouseListener {
 	String distraction = PopupEvent.BRUSH_FIRST;
 	
 	//House Sprites
-	HouseSprite house = new HouseSprite("house","unpainted_house.png"); 
-	HouseSprite roof = new HouseSprite("roof","unpainted_roof.png");
-	HouseSprite door = new HouseSprite("door","unpainted_door.png");
+	HouseSprite house1 = new HouseSprite("house1","unpainted_house.png"); 
 	
 	//House Sprites List
 	ArrayList<HouseSprite> HouseList = new ArrayList<HouseSprite>();
@@ -108,15 +123,27 @@ public class BlobsOnlyJob extends Game implements MouseListener {
 	
 	GameClock t = new GameClock();
 	
+	//inventory
+	Inventory inventory = new Inventory("inventory");
+	//ItemSprite inventory = new ItemSprite("inventory", "inventory1.png");
+	
+	//Collectable Items
+	ItemSprite art = new ItemSprite("art","item_art1.png");
+	ItemSprite pint = new ItemSprite("pint","item_pint.png");
+	ItemSprite videoGame = new ItemSprite("videoGame","item_videogame.png");
+	
+	//Bedroom object creation
+	BedRoom bedroom = new BedRoom("bedroom");
+	
 	
 	public void update(ArrayList<String> pressedKeys) {
 		super.update(pressedKeys);
 		
 		//Added House
 		if ( Blob != null && Phone != null && Brush != null && ItemList != null
-				&& house != null && HouseList != null ) { 
+				&& house1 != null && HouseList != null ) { 
 		
-		// Sometimes Blob will spawn at 0,0
+		// if blob is not null
 			if ( frames == 1 ) {
 				Blob.setPosition(200,400);
 			}
@@ -130,48 +157,6 @@ public class BlobsOnlyJob extends Game implements MouseListener {
 		if ( pressedKeys.contains(KeyEvent.getKeyText(KeyEvent.VK_LEFT)))
 			Blob.getPosition().translate(-5, 0);
 
-		//House Sprite(s)
-		if ( gameMode == 1 ) {
-			house.setVisible(true);
-			roof.setVisible(true);
-			door.setVisible(true);
-		}
-		else {
-			house.setVisibility(false);
-			roof.setVisible(false);
-			door.setVisible(false);
-		}
-		
-		if ( gameMode == 0 ){
-			Brush.setVisible(true);
-			Phone.setVisible(true);
-			Bed.setVisible(true);
-		}
-		else{
-			Brush.setVisible(false);
-			Phone.setVisible(false);
-			Bed.setVisible(false);
-		}
-		
-		house.setPosition(200,50);
-		roof.setPosition(200,50);
-		door.setPosition(200,50);
-		
-		if ( house.isVisible() && !HouseList.contains(house))
-			HouseList.add(house);
-		if ( roof.isVisible() && !HouseList.contains(roof))
-			HouseList.add(roof);
-		if ( door.isVisible() && !HouseList.contains(door))
-			HouseList.add(door);
-		//
-		
-		//Bed game over screen
-		if ( gameMode == 7 )
-			Blob.setVisible(false);
-
-		//Game Mode 0
-		if ( gameMode == 0 ){
-		
 		// Add visible items to the ItemList
 		if ( Phone.isVisible() && !ItemList.contains(Phone))
 			ItemList.add(Phone);
@@ -183,6 +168,19 @@ public class BlobsOnlyJob extends Game implements MouseListener {
 		
 		Brush.setPosition(400, 400);
 		
+		//House Sprite(s)
+		if ( gameMode == 1 )
+			house1.setVisible(true);
+		else
+			house1.setVisibility(false);
+		
+		house1.setPosition(100,100);
+		
+		if ( house1.isVisible() && !HouseList.contains(house1))
+			HouseList.add(house1);
+		//
+		
+		
 		
 		//Bed Item
 		Bed.setPosition(300,300);
@@ -190,10 +188,16 @@ public class BlobsOnlyJob extends Game implements MouseListener {
 		if ( Bed.isVisible() && !ItemList.contains(Bed))
 			ItemList.add(Bed);
 		
-		// Blob.collidesWith(Bed) && Blob.hasSomeItem()
 		if ( Blob.collidesWith(Bed) ){
+			//Normally throw an event
+			for ( ItemSprite i : ItemList )
+				i.setVisible(false);
 			gameMode = 7;
 		}
+		
+		if ( gameMode == 7 )
+			Blob.setVisible(false);
+		
 		//
 		
 		if ( Phone_Pickup.isVisible() && !ItemList.contains(Phone_Pickup))
@@ -223,61 +227,33 @@ public class BlobsOnlyJob extends Game implements MouseListener {
 		
 		Brush_Pickup.addEventListener(Brush_Pickup, PopupEvent.BRUSH_CLOSE);
 		Brush_Pickup.addEventListener(heyListen, DistractionEvent.PHONE_ARROW);
-		}
 		
-		// map!
-		// Before we had a for each loop to make all the items invisible
-		// but we don't need that anymore because of the if else statements on
-		// lines 140-155 and the draw method lines 298-315
-		// We might need to put the item loop back in the future, we'll see
-		
-		//Inside to outside
-		if ( Blob.getPosition().getY() >= 500 && gameMode == 0){
-			Blob.setPosition(200,114);
+		if ( Blob.getPosition().getY() >= 500 ){
+			for ( ItemSprite i : ItemList )
+				i.setVisible(false);
+			Blob.setPosition((int)Blob.getPosition().getX(),0);
 			gameMode = 1;
 		}
 		
-		//Inside to room
-		if ( Blob.getPosition().getX() >= 500 && gameMode == 0 ){
-			Blob.setPosition(10,(int)Blob.getPosition().getY());
-			gameMode = 3;
-		}
-		
-		//Outside to inside
-		if ( Blob.collidesWith(door) && gameMode == 1 ){
-			Blob.setPosition((int)Blob.getPosition().getX(), 500);
-			gameMode = 0;
-		}
-		
-		if ( Blob.getPosition().getX() <= -1 && gameMode == 1){
+		if ( Blob.getPosition().getX() <= -1){
+			for ( ItemSprite i : ItemList )
+				i.setVisible(false);
 			Blob.setPosition(500-Blob.getUnscaledWidth(),(int)Blob.getPosition().getY());
 			gameMode = 2;
 		}
 		
-		if ( Blob.getPosition().getY() >= 500 && gameMode == 1 ){
-			Blob.setPosition((int)Blob.getPosition().getX(), 10);
-			gameMode = 4;
-		}
-		
-		if ( Blob.getPosition().getX() >= 500 && gameMode == 2 ){
-			Blob.setPosition(0, (int)Blob.getPosition().getY());
-			gameMode = 1;
-		}
-		
-		if ( Blob.getPosition().getX() <= 0 && gameMode == 3 ){
-			Blob.setPosition(500, (int) Blob.getPosition().getY());
-			gameMode = 0;
-		}
-		
-		if ( Blob.getPosition().getY() <= 0 && gameMode == 4 ){
-			Blob.setPosition((int)Blob.getPosition().getX(), 500);
-			gameMode = 1;
-		}
 		
 		//Game Over
 		if ( pressedKeys.contains("J"))
 			this.exitGame();
 		}
+		
+		//Open up the inventory
+		if (pressedKeys.contains("I")){
+			inventory.update(pressedKeys);
+			inventory.setVisible(true);
+			System.out.println(inventory.contains(art));
+		} else {inventory.setVisible(false);}
 		
 		frames++;
 
@@ -285,40 +261,41 @@ public class BlobsOnlyJob extends Game implements MouseListener {
 	
 	public void draw(Graphics g){
 		super.draw(g);
-		
+		 
 		// if not null draw blob and the sprites
 		// Added House
-		if ( Blob != null && Phone != null && Brush != null  && Phone_Pickup != null && Brush_Pickup != null && heyListen != null
-				&& house != null && HouseList != null ){
-			Blob.draw(g);
-			if ( gameMode == 0){
-			Phone.draw(g);
-			Brush.draw(g);
-			Phone_Pickup.draw(g);
-			Brush_Pickup.draw(g);
-			heyListen.draw(g);
-			Bed.draw(g);
-			}
-		}
+		
 		if ( gameMode == 1 ) {
+			/*
+			g.drawRect(a.x, a.y, a.width, a.height);
+			if ( a.contains(MouseX, MouseY) )  
+				g.fillRect(a.x, a.y, a.width, a.height);
+			g.drawString("Blob's House", 350, 350);
+			*/
 			// Rewritten for new House mechanic
 			for ( HouseSprite i : HouseList )
 				i.draw(g);
 			}
 		if ( gameMode == 2 ) {
-			g.drawRect(150, 0, 300, 150);
-			g.drawString("Bar", 300, 50 );
-		}
-		if ( gameMode == 3 ){
-			g.drawString("Blob's (messy) room", 200, 200);
-		}
-		if ( gameMode == 4 ){
-			g.drawString("The Museum", 200,	350);
+			bedroom.draw(g);
 		}
 		if ( gameMode == 7 )
 			g.drawString("Yay! You did it! You beat the thing!", 150, 220);
-		}
 		
+		//draw the inventory
+		inventory.draw(g);
+		
+		if ( Blob != null && Phone != null && Brush != null  && Phone_Pickup != null && Brush_Pickup != null && heyListen != null
+				&& house1 != null && HouseList != null ){
+			Blob.draw(g);
+			Phone.draw(g);
+			Brush.draw(g);
+			Phone_Pickup.draw(g);
+			Brush_Pickup.draw(g);
+			heyListen.draw(g);
+			//Bed.draw(g);
+		}
+		}
 	
 
 	@Override
@@ -337,7 +314,20 @@ public class BlobsOnlyJob extends Game implements MouseListener {
 	
 	@Override
 	public void mouseReleased(MouseEvent e) {
-		// Will delete this after new functionality is tested to work
+		// Will delete this after new funcionality is tested to work
+		
+			if (bedroom.getObjectByID("tv").getGlobalHitBox().contains(e.getX(), e.getY()-25)){
+				//System.out.println("it works");
+			}
+			
+			
+			for (ItemSprite i : bedroom.getFurniture()){
+				if(i.getGlobalHitBox().contains(e.getX(), e.getY()-25)) {
+					bedroom.dispatchEvent(new Event(bedroom.CLEAN_MESS , i));
+					//if(i.getId() == bed)
+				}
+			}
+			
 		
 			// House check
 		if ( gameMode == 1 ){
@@ -381,8 +371,7 @@ public class BlobsOnlyJob extends Game implements MouseListener {
 					 System.out.println("Brush_Popup was clicked");
 					 Remover.add(i);
 					 popupMode = false;
-				 }
-					 
+				 } 
 			 }	
 			}
 		for ( ItemSprite i : Remover ) {
@@ -409,5 +398,6 @@ public class BlobsOnlyJob extends Game implements MouseListener {
 		// TODO Auto-generated method stub
 		
 	}
+	
 	
 }
