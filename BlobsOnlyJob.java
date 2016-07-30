@@ -92,7 +92,9 @@ public class BlobsOnlyJob extends Game implements MouseListener {
 	String distraction = PopupEvent.BRUSH_FIRST;
 	
 	//House Sprites
-	HouseSprite house1 = new HouseSprite("house1","unpainted_house.png"); 
+	HouseSprite house = new HouseSprite("house","unpainted_house.png"); 
+	HouseSprite roof = new HouseSprite("roof","unpainted_roof.png");
+	HouseSprite door = new HouseSprite("door","unpainted_door.png");
 	
 	//House Sprites List
 	ArrayList<HouseSprite> HouseList = new ArrayList<HouseSprite>();
@@ -112,7 +114,7 @@ public class BlobsOnlyJob extends Game implements MouseListener {
 		
 		//Added House
 		if ( Blob != null && Phone != null && Brush != null && ItemList != null
-				&& house1 != null && HouseList != null ) { 
+				&& house != null && HouseList != null ) { 
 		
 		// Sometimes Blob will spawn at 0,0
 			if ( frames == 1 ) {
@@ -129,10 +131,16 @@ public class BlobsOnlyJob extends Game implements MouseListener {
 			Blob.getPosition().translate(-5, 0);
 
 		//House Sprite(s)
-		if ( gameMode == 1 )
-			house1.setVisible(true);
-		else
-			house1.setVisibility(false);
+		if ( gameMode == 1 ) {
+			house.setVisible(true);
+			roof.setVisible(true);
+			door.setVisible(true);
+		}
+		else {
+			house.setVisibility(false);
+			roof.setVisible(false);
+			door.setVisible(false);
+		}
 		
 		if ( gameMode == 0 ){
 			Brush.setVisible(true);
@@ -145,10 +153,16 @@ public class BlobsOnlyJob extends Game implements MouseListener {
 			Bed.setVisible(false);
 		}
 		
-		house1.setPosition(100,100);
+		house.setPosition(200,50);
+		roof.setPosition(200,50);
+		door.setPosition(200,50);
 		
-		if ( house1.isVisible() && !HouseList.contains(house1))
-			HouseList.add(house1);
+		if ( house.isVisible() && !HouseList.contains(house))
+			HouseList.add(house);
+		if ( roof.isVisible() && !HouseList.contains(roof))
+			HouseList.add(roof);
+		if ( door.isVisible() && !HouseList.contains(door))
+			HouseList.add(door);
 		//
 		
 		//Bed game over screen
@@ -215,17 +229,22 @@ public class BlobsOnlyJob extends Game implements MouseListener {
 		// Before we had a for each loop to make all the items invisible
 		// but we don't need that anymore because of the if else statements on
 		// lines 140-155 and the draw method lines 298-315
+		// We might need to put the item loop back in the future, we'll see
+		
+		//Inside to outside
 		if ( Blob.getPosition().getY() >= 500 && gameMode == 0){
-			Blob.setPosition((int)Blob.getPosition().getX(),10);
+			Blob.setPosition(200,114);
 			gameMode = 1;
 		}
 		
+		//Inside to room
 		if ( Blob.getPosition().getX() >= 500 && gameMode == 0 ){
 			Blob.setPosition(10,(int)Blob.getPosition().getY());
 			gameMode = 3;
 		}
 		
-		if ( Blob.getPosition().getY() <= 0 && gameMode == 1 ){
+		//Outside to inside
+		if ( Blob.collidesWith(door) && gameMode == 1 ){
 			Blob.setPosition((int)Blob.getPosition().getX(), 500);
 			gameMode = 0;
 		}
@@ -270,7 +289,7 @@ public class BlobsOnlyJob extends Game implements MouseListener {
 		// if not null draw blob and the sprites
 		// Added House
 		if ( Blob != null && Phone != null && Brush != null  && Phone_Pickup != null && Brush_Pickup != null && heyListen != null
-				&& house1 != null && HouseList != null ){
+				&& house != null && HouseList != null ){
 			Blob.draw(g);
 			if ( gameMode == 0){
 			Phone.draw(g);
