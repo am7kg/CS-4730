@@ -258,8 +258,8 @@ public class DisplayObject extends EventDispatcher  {
 		this.position = position;
 	}
 	
-	public void setPosition(int x, int y){
-		this.position.setLocation(x, y);
+	public void setPosition(double d, double e){
+		this.position.setLocation(d, e);
 	}
 
 	/**
@@ -344,9 +344,10 @@ public class DisplayObject extends EventDispatcher  {
 			return p;
 		}
 		else{
-			Point t =  new Point((int)(p.getX() + this.getPosition().x), (int)(p.getY() + this.getPosition().getY()));
-			System.out.println("OSDIF");
-			return this.parent.localToGlobal(t);
+			Point t =  new Point(
+					(int)(this.parent.getPosition().getX() + this.parent.localToGlobal(p).getX()),
+					(int)(this.parent.getPosition().getY() + this.parent.localToGlobal(p).getY()));
+			return t;
 		}
 	}
 	
@@ -359,6 +360,7 @@ public class DisplayObject extends EventDispatcher  {
 	public Rectangle getGlobalHitBox() {
 		Point p = new Point(this.getPosition().x, this.getPosition().y);
 		p = localToGlobal(p);
+		//System.out.println(this.getId() + " "+p.toString()+this.getUnscaledWidth()+" "+this.getUnscaledHeight());
 		return new Rectangle(p.x,p.y,this.getUnscaledWidth(),this.getUnscaledHeight());
 		//return new Rectangle(this.getPosition().x,this.getPosition().y,this.getUnscaledWidth(),this.getUnscaledHeight());
 
