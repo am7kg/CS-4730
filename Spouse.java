@@ -2,7 +2,7 @@ package edu.virginia.engine.display;
 
 import java.util.ArrayList;
 
-import edu.virginia.BlobsOnlyJob.BlobsOnlyJob;
+import edu.virginia.lab1test.BlobsOnlyJob;
 
 public class Spouse extends AnimatedSprite{
 	
@@ -29,7 +29,11 @@ public class Spouse extends AnimatedSprite{
 			this.addChild(paintedFirst);
 			
 		}
+		// Right now the for loop makes it so that it checks the final item
+		// Thus, order matters (but order shouldn't matter)
 		if (inv.size()>1){
+			
+			
 			for(ItemSprite i: inv){
 				if (i.getId() == "brush"){
 					ending = "painted";
@@ -38,6 +42,7 @@ public class Spouse extends AnimatedSprite{
 					painted.setVisible(true);
 					painted.setParent(this);
 					this.addChild(painted);
+					break;
 				} else {
 					ending = "byeBye";
 					this.setVisible(true);
@@ -47,6 +52,7 @@ public class Spouse extends AnimatedSprite{
 					this.addChild(byeBye);
 				}
 			}
+			
 			
 		}
 	}

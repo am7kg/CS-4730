@@ -1,4 +1,4 @@
-package edu.virginia.BlobsOnlyJob;
+package edu.virginia.lab1test;
 
 import java.awt.Graphics;
 import java.awt.Rectangle;
@@ -21,6 +21,8 @@ import edu.virginia.engine.display.ItemSprite;
 import edu.virginia.engine.display.Museum;
 import edu.virginia.engine.display.Spouse;
 import edu.virginia.engine.sound.SoundManager;
+import edu.virginia.engine.tweening.Tween;
+import edu.virginia.engine.tweening.TweenableParam;
 import edu.virginia.engine.util.GameClock;
 import edu.virginia.enginge.events.DistractionEvent;
 import edu.virginia.enginge.events.Event;
@@ -49,7 +51,6 @@ import edu.virginia.enginge.events.PopupEvent;
 public class BlobsOnlyJob extends Game implements MouseListener {
 
 	
-	
 	public BlobsOnlyJob() {
 		super("Blob's Only Job", 500, 500);
 		// TODO Auto-generated constructor stub
@@ -62,6 +63,10 @@ public class BlobsOnlyJob extends Game implements MouseListener {
 
 		bedroom.addEventListener(bedroom, bedroom.CLEAN_MESS);
 	
+		Bed.setVisible(false);
+		
+		Blob.setPosition(200, 200);
+				
 	}
 	
 	public static void main(String[] args) {
@@ -79,7 +84,7 @@ public class BlobsOnlyJob extends Game implements MouseListener {
 	BlobSprite Blob = new BlobSprite("Blob", "blob1.png");
 
 	ItemSprite Phone = new ItemSprite("Phone","phone.png");
-	ItemSprite Brush = new ItemSprite("Brush", "brush.jpeg");
+	ItemSprite Brush = new ItemSprite("Brush", "brush.png");
 	ItemSprite Bed = new ItemSprite("Bed", "bed.png");
 	
 	DisplayBox Phone_Pickup = new DisplayBox("Phone_Pickup", "phone_pickup_event.png");
@@ -91,9 +96,6 @@ public class BlobsOnlyJob extends Game implements MouseListener {
 
 	int gameMode = 0;
 	
-	int MouseX;
-	int MouseY;
-
 	ArrayList<ItemSprite> Remover = new ArrayList<ItemSprite>();
 	
 	int frames = 1;
@@ -136,21 +138,14 @@ public class BlobsOnlyJob extends Game implements MouseListener {
 		
 	Spouse spouse = new Spouse("spouse");	
 	
-	
-	
-	
 	public void update(ArrayList<String> pressedKeys) {
 		super.update(pressedKeys);
 		
 		//Added House
 		if ( Blob != null && Phone != null && Brush != null && ItemList != null
-				&& house != null && HouseList != null ) { 
-		
-		// Sometimes Blob will spawn at 0,0
-			if ( frames == 1 ) {
-				Blob.setPosition(200,400);
-			}
-		
+				&& house != null && HouseList != null && spouse != null 
+				&& inventory != null ) { 
+			
 		if ( pressedKeys.contains(KeyEvent.getKeyText(KeyEvent.VK_UP))) 
 			Blob.getPosition().translate(0, -5);
 		if ( pressedKeys.contains(KeyEvent.getKeyText(KeyEvent.VK_DOWN)))
@@ -174,15 +169,12 @@ public class BlobsOnlyJob extends Game implements MouseListener {
 		
 		if ( gameMode == 0 ){
 			Brush.setVisible(true);
-			Phone.setVisible(true);
-			Bed.setVisible(true);
-			
+			Phone.setVisible(true);			
 		}
 		else{
 			Brush.setVisible(false);
 			Phone.setVisible(false);
-			Bed.setVisible(false);
-		}
+			}
 		
 		house.setPosition(200,50);
 		roof.setPosition(200,50);
@@ -196,14 +188,18 @@ public class BlobsOnlyJob extends Game implements MouseListener {
 			HouseList.add(door);
 		//
 		
+		if ( spouse.isVisible() )
+			Bed.setVisible(true);
+		
 		//Bed game over screen
 		if ( gameMode == 7 )
 			Blob.setVisible(false);
 
 		//Game Mode 0
 		if ( gameMode == 0 ){
-			
-			spouse.ending(inventory.getInv());
+			// Added a isVisible check so spouse doesn't change ending
+			if (!spouse.isVisible())
+				spouse.ending(inventory.getInv());
 		
 		// Add visible items to the ItemList
 		if ( Phone.isVisible() && !ItemList.contains(Phone))
@@ -218,7 +214,8 @@ public class BlobsOnlyJob extends Game implements MouseListener {
 		
 		
 		//Bed Item
-		Bed.setPosition(300,300);
+		if ( Bed.isVisible() )
+			Bed.setPosition(300,300);
 		
 		if ( Bed.isVisible() && !ItemList.contains(Bed))
 			ItemList.add(Bed);
@@ -238,9 +235,7 @@ public class BlobsOnlyJob extends Game implements MouseListener {
 		if ( heyListen.isVisible() && !ItemList.contains(heyListen))
 			ItemList.add(heyListen);
 		
-		
 		Phone_Pickup.setPosition(100,150);
-		
 		
 		Phone.addEventListener(Phone_Pickup, PopupEvent.PHONE_PICKUP);
 		
@@ -316,7 +311,7 @@ public class BlobsOnlyJob extends Game implements MouseListener {
 		if (pressedKeys.contains("I")){
 			inventory.update(pressedKeys);
 			inventory.setVisible(true);
-		} else {inventory.setVisible(false);}
+		} else if ( inventory != null ) {inventory.setVisible(false);}
 				
 		
 		frames++;
@@ -346,7 +341,7 @@ public class BlobsOnlyJob extends Game implements MouseListener {
 		}
 		if ( gameMode == 7 ){
 			g.drawString("Yay! You did it! You beat the thing!", 150, 220);
-			g.drawString("You got "+ inventory.getInv().size() + "items!", 150, 250);
+			g.drawString("You got "+ inventory.getInv().size() + " items!", 150, 250);
 		}
 		
 		if (gameMode == 8){
@@ -355,7 +350,7 @@ public class BlobsOnlyJob extends Game implements MouseListener {
 			g.drawString("But your spouse is leaving you.... for a Square!!",150,300);
 		}
 		if ( Blob != null && Phone != null && Brush != null  && Phone_Pickup != null && Brush_Pickup != null && heyListen != null
-				&& house != null && HouseList != null ){
+				&& house != null && HouseList != null && inventory != null ){
 			Blob.draw(g);
 			if ( gameMode == 0){
 			Phone.draw(g);
@@ -363,12 +358,14 @@ public class BlobsOnlyJob extends Game implements MouseListener {
 			Phone_Pickup.draw(g);
 			Brush_Pickup.draw(g);
 			heyListen.draw(g);
-			Bed.draw(g);
 			spouse.draw(g);
+			// Bed is only drawn if spouse is there
+			if ( spouse.isVisible())
+				Bed.draw(g);
 			}
+			inventory.draw(g);
 		}
 		
-		inventory.draw(g);
 		}
 	
 		
