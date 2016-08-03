@@ -12,6 +12,20 @@ public class Spouse extends AnimatedSprite{
 	DisplayBox paintedFirst = new DisplayBox("paintedFirst","painted_first_txt.png");
 	DisplayBox byeBye = new DisplayBox("byeBye", "spouse_mad_txt.png");
 	
+	//More endings!
+	DisplayBox achievement;
+	DisplayBox art = new DisplayBox("art","spouse_art.png");
+	DisplayBox cat;
+	DisplayBox pint = new DisplayBox("pint","spouse_pint.png");
+	DisplayBox playbill;
+	DisplayBox puke;
+	DisplayBox shirt;
+	DisplayBox skull;
+	DisplayBox videogame = new DisplayBox("videogame","spouse_videogame.png");
+	
+	DisplayBox bed = new DisplayBox("bed","spouse_bed.png");
+	
+	
 	public Spouse(String id) {
 		super(id);
 		this.setVisible(false);
@@ -29,11 +43,7 @@ public class Spouse extends AnimatedSprite{
 			this.addChild(paintedFirst);
 			
 		}
-		// Right now the for loop makes it so that it checks the final item
-		// Thus, order matters (but order shouldn't matter)
 		if (inv.size()>1){
-			
-			
 			for(ItemSprite i: inv){
 				if (i.getId() == "brush"){
 					ending = "painted";
@@ -52,13 +62,48 @@ public class Spouse extends AnimatedSprite{
 					this.addChild(byeBye);
 				}
 			}
-			
-			
 		}
 	}
 	
 	public String getEnding(){
 		return this.ending;
 	}
-
+	
+	public void cycle(ArrayList<ItemSprite> inv, int k){
+		byeBye.setVisible(false);
+		painted.setVisible(false);
+		paintedFirst.setVisible(false);
+		if ( k < inv.size() ){
+			if ( inv.get(k).getImageFileName() == "item_achievement.png" ){
+				achievement.setVisible(true);
+				achievement.setPosition(150, 0);
+				achievement.setParent(this);
+				this.addChild(achievement);
+			}
+			if ( inv.get(k).getImageFileName() == "item_pint.png"){
+				pint.setVisible(true);
+				pint.setPosition(150,0);
+				pint.setParent(this);
+				this.addChild(pint);
+			}
+			if ( inv.get(k).getImageFileName() == "item_art1.png"){
+				art.setVisible(true);
+				art.setPosition(150,0);
+				art.setParent(this);
+				this.addChild(art);
+			}
+			if ( inv.get(k).getImageFileName() == "item_videogame.png"){
+				videogame.setVisible(true);
+				videogame.setPosition(150,0);
+				videogame.setParent(this);
+				this.addChild(videogame);
+			}
+		}
+		else{
+		bed.setVisible(true);
+		bed.setPosition(150,0);
+		bed.setParent(this);
+		this.addChild(bed);
+		}
+	}
 }

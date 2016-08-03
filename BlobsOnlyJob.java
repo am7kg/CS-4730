@@ -143,7 +143,13 @@ public class BlobsOnlyJob extends Game implements MouseListener {
 	Bar bar = new Bar("bar");
 	Museum museum = new Museum("museum");
 		
-	Spouse spouse = new Spouse("spouse");	
+	Spouse spouse = new Spouse("spouse");
+	
+	// spouses angry messages
+	int k = 0;
+	
+	//Tweening
+	Tween test = new Tween(heyListen);
 	
 	public void update(ArrayList<String> pressedKeys) {
 		super.update(pressedKeys);
@@ -152,7 +158,7 @@ public class BlobsOnlyJob extends Game implements MouseListener {
 		if ( Blob != null && Phone != null && Brush != null && ItemList != null
 				&& house != null && HouseList != null && spouse != null 
 				&& inventory != null ) { 
-			
+						
 		if ( pressedKeys.contains(KeyEvent.getKeyText(KeyEvent.VK_UP))) 
 			Blob.getPosition().translate(0, -5);
 		if ( pressedKeys.contains(KeyEvent.getKeyText(KeyEvent.VK_DOWN)))
@@ -237,8 +243,12 @@ public class BlobsOnlyJob extends Game implements MouseListener {
 			ItemList.add(Bed);
 		
 		// Blob.collidesWith(Bed) && Blob.hasSomeItem()
-		if ( Blob.collidesWith(Bed) ){
+		if ( Blob.collidesWith(Bed) &&  spouse.getEnding() == "painted" )
 			gameMode = 7;
+		if ( Blob.collidesWith(Bed) && spouse.getEnding() == "paintedFirst" )
+			gameMode = 9;
+		if ( Blob.collidesWith(Bed) && spouse.getEnding() == "byeBye" ){
+			gameMode = 8;
 		}
 		//
 		
@@ -291,6 +301,11 @@ public class BlobsOnlyJob extends Game implements MouseListener {
 		if ( Blob.collidesWith(door) && gameMode == 1 ){
 			Blob.setPosition((int)Blob.getPosition().getX(), 500);
 			gameMode = 0;
+		}
+		
+		if ( Blob.getPosition().getX()>=500 && gameMode == 1 ) {
+			Blob.setPosition(0,(int)(Blob.getPosition().getY()*.3));
+			gameMode = 5;
 		}
 		
 		if ( Blob.getPosition().getX() <= -1 && gameMode == 1){
@@ -355,6 +370,9 @@ public class BlobsOnlyJob extends Game implements MouseListener {
 		if ( gameMode == 4 ){
 			museum.draw(g);
 		}
+		if ( gameMode == 5 ){
+			//street.draw(g);
+		}
 		if ( gameMode == 7 ){
 			g.drawString("Yay! You did it! You beat the thing!", 150, 220);
 			g.drawString("You got "+ inventory.getInv().size() + " items!", 150, 250);
@@ -365,8 +383,13 @@ public class BlobsOnlyJob extends Game implements MouseListener {
 			g.drawString("You got "+ inventory.getInv().size() + "items!",150,250);
 			g.drawString("But your spouse is leaving you.... for a Square!!",150,300);
 		}
+		if ( gameMode == 9 ){
+			g.drawString("Yay! You did it! You beat the thing! And your spouse loves you!", 100, 220);
+			g.drawString("You got "+ inventory.getInv().size() + " items!", 150, 250);
+		}
 		if ( Blob != null && Phone != null && Brush != null  && Phone_Pickup != null && Brush_Pickup != null && heyListen != null
-				&& house != null && HouseList != null && inventory != null ){
+				&& house != null && HouseList != null && inventory != null
+				&& spouse != null){
 			Blob.draw(g);
 			if ( gameMode == 0){
 			Phone.draw(g);
@@ -406,9 +429,11 @@ public class BlobsOnlyJob extends Game implements MouseListener {
 	public void mouseReleased(MouseEvent e) {
 		// Will delete this after new functionality is tested to work
 		
+		// I put this in the main body
+		/*
 		if (this.gameMode == 0){
-			if (spouse.getEnding() == "painted"){
-				if (spouse.getObjectByID("painted").getGlobalHitBox().contains(e.getX(), e.getY()-25)){
+			if (spouse.getEnding() == "painted")
+				//if (spouse.getObjectByID("painted").getGlobalHitBox().contains(e.getX(), e.getY()-25)){
 					gameMode = 7;
 				}
 			}
@@ -419,6 +444,7 @@ public class BlobsOnlyJob extends Game implements MouseListener {
 				}
 			}
 		}
+		*/
 		
 		if (this.gameMode == 2){
 			for(ItemSprite i : bar.getBarItems()){
@@ -499,9 +525,10 @@ public class BlobsOnlyJob extends Game implements MouseListener {
 					 i.dispatchEvent( new PopupEvent(PopupEvent.BRUSH_CLOSE,i));
 					 if(disCount == 1){
 						 System.out.println("dispatch zone");
-						 i.dispatchEvent( 
+						 i.dispatchEvent(
 						new DistractionEvent(
 						DistractionSprite.PHONE_ARROW,i,Phone.getPosition().getX()-30,Phone.getPosition().getY()));
+						 test.animate(TweenableParam.ALPHA, 0, 1, 500);
 					 }
 					 System.out.println("Brush_Popup was clicked");
 					 Remover.add(i);
@@ -518,9 +545,19 @@ public class BlobsOnlyJob extends Game implements MouseListener {
 			if ( n < 20) System.out.println("chill bro");
 			if ( n > 20 && n < 100 ) System.out.println("please stop");
 			if ( n > 100 && n < 1000 ) System.out.println("clicking on me doesn't do anything!!");
-			if ( n == 1001 ) System.out.println("JESUS CHRIST");
+			if ( n == 1001 ) System.out.println("GAME OVER");
+			if ( n == 1002 ) this.exitGame();
 			n++;
 		}
+		// endings
+		if ( spouse.isVisible() )
+			if ( spouse.getGlobalHitBox().contains(e.getX(), e.getY())){
+				spouse.cycle(inventory.getInv(),k);
+				k++;
+			}
+					
+			
+		
 	}
 
 	@Override
