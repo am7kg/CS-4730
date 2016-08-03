@@ -136,7 +136,7 @@ public class BlobsOnlyJob extends Game implements MouseListener {
 	ItemSprite art = new ItemSprite("art","item_art1.png");
 	ItemSprite pint = new ItemSprite("pint","item_pint.png");
 	ItemSprite videoGame = new ItemSprite("videoGame","item_videogame.png");
-	ItemSprite invBrush = new ItemSprite("brush","brush.png");	
+	ItemSprite invBrush = new ItemSprite("brush","item_brush.png");	
 	
 	//Each level object creation
 	BedRoom bedroom = new BedRoom("bedroom");
@@ -304,7 +304,7 @@ public class BlobsOnlyJob extends Game implements MouseListener {
 		}
 		
 		if ( Blob.getPosition().getX()>=500 && gameMode == 1 ) {
-			Blob.setPosition(0,(int)(Blob.getPosition().getY()*.3));
+			Blob.setPosition(10,(int)(Blob.getPosition().getY()*.3));
 			gameMode = 5;
 		}
 		
@@ -330,6 +330,10 @@ public class BlobsOnlyJob extends Game implements MouseListener {
 		
 		if ( Blob.getPosition().getY() <= 0 && gameMode == 4 ){
 			Blob.setPosition((int)Blob.getPosition().getX(), 500);
+			gameMode = 1;
+		}
+		if ( Blob.getPosition().getX()<=0 && gameMode == 5 ){
+			Blob.setPosition(490,(int)Blob.getPosition().getY());
 			gameMode = 1;
 		}
 		

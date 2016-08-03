@@ -13,14 +13,14 @@ public class Spouse extends AnimatedSprite{
 	DisplayBox byeBye = new DisplayBox("byeBye", "spouse_mad_txt.png");
 	
 	//More endings!
-	DisplayBox achievement;
+	DisplayBox achievement = new DisplayBox("achievement","spouse_achievement.png");
 	DisplayBox art = new DisplayBox("art","spouse_art.png");
-	DisplayBox cat;
+	DisplayBox cat = new DisplayBox("achievement","spouse_achievement.png");
 	DisplayBox pint = new DisplayBox("pint","spouse_pint.png");
-	DisplayBox playbill;
-	DisplayBox puke;
-	DisplayBox shirt;
-	DisplayBox skull;
+	DisplayBox playbill = new DisplayBox("playbill","spouse_playbill.png");
+	DisplayBox puke = new DisplayBox("puke","spouse_puke.png");
+	DisplayBox shirt = new DisplayBox("shirt","spouse_shirt.png");
+	DisplayBox skull = new DisplayBox("skull","spouse_skull.png");
 	DisplayBox videogame = new DisplayBox("videogame","spouse_videogame.png");
 	
 	DisplayBox bed = new DisplayBox("bed","spouse_bed.png");
@@ -74,11 +74,11 @@ public class Spouse extends AnimatedSprite{
 		painted.setVisible(false);
 		paintedFirst.setVisible(false);
 		if ( k < inv.size() ){
-			if ( inv.get(k).getImageFileName() == "item_achievement.png" ){
-				achievement.setVisible(true);
-				achievement.setPosition(150, 0);
-				achievement.setParent(this);
-				this.addChild(achievement);
+			if ( inv.get(k).getImageFileName() == "item_playbill.png" ){
+				playbill.setVisible(true);
+				playbill.setPosition(150, 0);
+				playbill.setParent(this);
+				this.addChild(playbill);
 			}
 			if ( inv.get(k).getImageFileName() == "item_pint.png"){
 				pint.setVisible(true);
@@ -97,6 +97,36 @@ public class Spouse extends AnimatedSprite{
 				videogame.setPosition(150,0);
 				videogame.setParent(this);
 				this.addChild(videogame);
+			}
+			if ( inv.get(k).getImageFileName() == "item_achievement.png"){
+				achievement.setVisible(true);
+				achievement.setPosition(150,0);
+				achievement.setParent(this);
+				this.addChild(achievement);
+			}
+			if ( inv.get(k).getImageFileName() == "item_skull.png"){
+				skull.setVisible(true);
+				skull.setPosition(150,0);
+				skull.setParent(this);
+				this.addChild(skull);
+			}
+			if ( inv.get(k).getImageFileName() == "item_cat.png"){
+				cat.setVisible(true);
+				cat.setPosition(150,0);
+				cat.setParent(this);
+				this.addChild(cat);
+			}
+			if ( inv.get(k).getImageFileName() == "item_puke.png"){
+				puke.setVisible(true);
+				puke.setPosition(150,0);
+				puke.setParent(this);
+				this.addChild(puke);
+			}
+			if ( inv.get(k).getImageFileName() == "item_shirt.png"){
+				shirt.setVisible(true);
+				shirt.setPosition(150,0);
+				shirt.setParent(this);
+				this.addChild(shirt);
 			}
 		}
 		else{
