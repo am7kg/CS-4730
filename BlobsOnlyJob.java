@@ -66,6 +66,13 @@ public class BlobsOnlyJob extends Game implements MouseListener {
 		Bed.setVisible(false);
 		
 		Blob.setPosition(200, 200);
+		
+		//Music and Sound
+		mSM.LoadMusic("cute", "resources/cute.wav");
+		mSM.PlayMusic("cute");
+		
+		mSM.LoadMusic("dubstep", "resources/dubstep.wav");
+		mSM.LoadSoundEffect("test", "resources/sfxtest.wav");
 				
 	}
 	
@@ -155,6 +162,15 @@ public class BlobsOnlyJob extends Game implements MouseListener {
 		if ( pressedKeys.contains(KeyEvent.getKeyText(KeyEvent.VK_LEFT)))
 			Blob.getPosition().translate(-5, 0);
 
+		
+		// Sound test
+		if ( pressedKeys.contains("L"))
+			mSM.PlaySoundEffect("test");
+		if ( pressedKeys.contains("K")){
+			mSM.StopMusic("cute");
+			mSM.PlayMusic("dubstep");
+		}
+		
 		//House Sprite(s)
 		if ( gameMode == 1 ) {
 			house.setVisible(true);
