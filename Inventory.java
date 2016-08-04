@@ -3,6 +3,8 @@ package edu.virginia.engine.display;
 import java.awt.Graphics;
 import java.util.ArrayList;
 
+import edu.virginia.BlobsOnlyJob.BlobsOnlyJob;
+
 public class Inventory extends Sprite {
 	
 	ArrayList<ItemSprite> inventory = new ArrayList<ItemSprite>();
@@ -11,6 +13,7 @@ public class Inventory extends Sprite {
 		super(id);
 		setImage("inventory1.png");
 		this.setPosition(100,100);
+		this.setVisible(false);
 	}
 	
 	
@@ -20,6 +23,7 @@ public class Inventory extends Sprite {
 			item.setParent(this);
 			this.addChild(item);
 			inventory.add(item);
+			this.setVisible(true);
 		}
 	}
 	

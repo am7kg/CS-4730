@@ -19,6 +19,7 @@ import edu.virginia.engine.display.Inventory;
 import edu.virginia.engine.display.ItemSprite;
 import edu.virginia.engine.display.Museum;
 import edu.virginia.engine.display.Spouse;
+import edu.virginia.engine.display.triviaRoom;
 import edu.virginia.engine.sound.SoundManager;
 import edu.virginia.engine.tweening.Tween;
 import edu.virginia.engine.tweening.TweenableParam;
@@ -151,6 +152,7 @@ public class BlobsOnlyJob extends Game implements MouseListener, IEventListener 
 	BedRoom bedroom = new BedRoom("bedroom");
 	Bar bar = new Bar("bar");
 	Museum museum = new Museum("museum");
+	triviaRoom triv = new triviaRoom("triv");
 		
 	Spouse spouse = new Spouse("spouse");
 	
@@ -357,6 +359,16 @@ public class BlobsOnlyJob extends Game implements MouseListener, IEventListener 
 			gameMode = 1;
 		}
 		
+		if (Blob.getPosition().getX() <= -10 && gameMode == 2){
+			Blob.setPosition(500, (int)Blob.getPosition().getY());
+			gameMode = 22;
+		}
+		
+		if (Blob.getPosition().getX() >= 550 && gameMode == 22){
+			Blob.setPosition(0, (int)Blob.getPosition().getY());
+			gameMode = 2;
+		}
+		
 		if ( Blob.getPosition().getX() <= 0 && gameMode == 3 ){
 			Blob.setPosition(500, (int) Blob.getPosition().getY());
 			gameMode = 0;
@@ -371,6 +383,13 @@ public class BlobsOnlyJob extends Game implements MouseListener, IEventListener 
 			gameMode = 1;
 		}
 		
+		if (gameMode == 2){
+			System.out.println((((int)System.currentTimeMillis()-bar.getTime()))/1000);
+			if (((int)System.currentTimeMillis() - bar.getTime())/1000 > 3 && ((int)System.currentTimeMillis() - bar.getTime())/1000 < 100){
+				bar.dispatchEvent(new Event(Bar.BLUB,bar));
+			}
+		}
+		
 		//Game Over
 		if ( pressedKeys.contains("J"))
 			this.exitGame();
@@ -380,9 +399,9 @@ public class BlobsOnlyJob extends Game implements MouseListener, IEventListener 
 		if (pressedKeys.contains("I")){
 			inventory.update(pressedKeys);
 			inventory.setVisible(true);
-		} else if ( inventory != null ) {inventory.setVisible(false);}
+		} else if ( inventory != null && t.getElapsedTime()/1000 > 3) {inventory.setVisible(false);}
 				
-		
+		System.out.println(t.getElapsedTime()/1000);
 		frames++;
 
 	}
@@ -404,6 +423,11 @@ public class BlobsOnlyJob extends Game implements MouseListener, IEventListener 
 		}
 		if ( gameMode == 2 ) {
 			bar.draw(g);
+			right.draw(g);
+			left.draw(g);
+		}
+		if (gameMode == 22) {
+			triv.draw(g);
 			right.draw(g);
 		}
 		if ( gameMode == 3 ){
@@ -499,6 +523,7 @@ public class BlobsOnlyJob extends Game implements MouseListener, IEventListener 
 				if(i.getGlobalHitBox().contains(e.getX(), e.getY()-25)) {
 					if(i.getId() == "bar"){
 						inventory.addItem(this.pint);
+						t.resetGameClock();
 					}
 				}	
 			}
@@ -514,6 +539,7 @@ public class BlobsOnlyJob extends Game implements MouseListener, IEventListener 
 				if(i.getGlobalHitBox().contains(e.getX(), e.getY()-25)) {
 					if(i.getId() == "art"){
 						inventory.addItem(this.art);
+						t.resetGameClock();
 					}
 				}	
 			}
@@ -529,6 +555,7 @@ public class BlobsOnlyJob extends Game implements MouseListener, IEventListener 
 				if(i.getGlobalHitBox().contains(e.getX(), e.getY()-25)) {
 					bedroom.dispatchEvent(new Event(bedroom.CLEAN_MESS , i));
 					if(i.getId() == "dirty bed"){
+						t.resetGameClock();
 						inventory.addItem(this.videoGame);
 						i.dispatchEvent(new Event(bedroom.INSTRUCT,i));
 					}
@@ -543,7 +570,7 @@ public class BlobsOnlyJob extends Game implements MouseListener, IEventListener 
 					
 					d.dispatchEvent(new Event(bedroom.INSTRUCT, d));
 					if (d.getId() == "game_achievement"){
-						
+						t.resetGameClock();
 						inventory.addItem(invAchiev);
 					}
 				}
@@ -557,6 +584,7 @@ public class BlobsOnlyJob extends Game implements MouseListener, IEventListener 
 					i.paintHouse();
 					if (!inventory.contains(invBrush)){
 						inventory.addItem(invBrush);
+						t.resetGameClock();
 					}
 				}
 			}
