@@ -1,4 +1,4 @@
-package edu.virginia.BlobsOnlyJob;
+package edu.virginia.lab1test;
 import java.awt.Graphics;
 import java.awt.Rectangle;
 import java.awt.event.KeyEvent;
@@ -18,8 +18,9 @@ import edu.virginia.engine.display.HouseSprite;
 import edu.virginia.engine.display.Inventory;
 import edu.virginia.engine.display.ItemSprite;
 import edu.virginia.engine.display.Museum;
+import edu.virginia.engine.display.QuestModule;
+import edu.virginia.engine.display.QuestSprite;
 import edu.virginia.engine.display.Spouse;
-import edu.virginia.engine.display.triviaRoom;
 import edu.virginia.engine.sound.SoundManager;
 import edu.virginia.engine.tweening.Tween;
 import edu.virginia.engine.tweening.TweenableParam;
@@ -70,7 +71,7 @@ public class BlobsOnlyJob extends Game implements MouseListener, IEventListener 
 		Blob.setPosition(200, 200);
 		
 		//Music and Sound
-		mSM.LoadMusic("cute", "resources/dubstep.wav");
+		mSM.LoadMusic("cute", "resources/cute.wav");
 		mSM.PlayMusic("cute");
 		
 		mSM.LoadMusic("dubstep", "resources/dubstep.wav");
@@ -81,7 +82,9 @@ public class BlobsOnlyJob extends Game implements MouseListener, IEventListener 
 		ItemList.add(exit);
 		Game_Intro.setPosition(200, 200);
 		Game_Intro.setVisible(true);
+			
 	}
+	
 	
 	public static void main(String[] args) {
 		BlobsOnlyJob game = new BlobsOnlyJob();
@@ -112,6 +115,8 @@ public class BlobsOnlyJob extends Game implements MouseListener, IEventListener 
 
 	int gameMode = 0;
 	
+	//QuestModule qm = new QuestModule("quest_module");
+	
 	ArrayList<ItemSprite> Remover = new ArrayList<ItemSprite>();
 	
 	int frames = 1;
@@ -140,6 +145,9 @@ public class BlobsOnlyJob extends Game implements MouseListener, IEventListener 
 	//inventory
 	Inventory inventory = new Inventory("inventory");
 	//ItemSprite inventory = new ItemSprite("inventory", "inventory1.png");
+	
+	//Quests are basically inventory right?
+	Inventory QuestModule = new Inventory("quest_module");
 		
 	//Collectable Items
 	ItemSprite art = new ItemSprite("art","item_art1.png");
@@ -152,7 +160,6 @@ public class BlobsOnlyJob extends Game implements MouseListener, IEventListener 
 	BedRoom bedroom = new BedRoom("bedroom");
 	Bar bar = new Bar("bar");
 	Museum museum = new Museum("museum");
-	triviaRoom triv = new triviaRoom("triv");
 		
 	Spouse spouse = new Spouse("spouse");
 	
@@ -168,6 +175,13 @@ public class BlobsOnlyJob extends Game implements MouseListener, IEventListener 
 	//Tweening
 	Tween test = new Tween(heyListen);
 	
+	//Quests
+	ItemSprite mq_header = new ItemSprite("mq_header","main_quest.png");
+	ItemSprite side_header = new ItemSprite("side_header","side_house.png");
+	ItemSprite mq_paint = new ItemSprite("mq_paint","mq_paint.png");
+	ItemSprite game_quest = new ItemSprite("game_quest","game_quest.png");
+	ItemSprite drink_quest = new ItemSprite("dirnk_quest","drink_quest.png");
+	ItemSprite art_quest = new ItemSprite("art_quest","art_quest.png");
 	
 	public void update(ArrayList<String> pressedKeys) {
 		super.update(pressedKeys);
@@ -248,7 +262,7 @@ public class BlobsOnlyJob extends Game implements MouseListener, IEventListener 
 		
 		if ( spouse.isVisible() )
 			Bed.setVisible(true);
-		
+	
 		//Bed game over screen
 		if ( gameMode == 7 )
 			Blob.setVisible(false);
@@ -256,7 +270,9 @@ public class BlobsOnlyJob extends Game implements MouseListener, IEventListener 
 		//Game Mode 0
 		if ( gameMode == 0 ){
 			// Added a isVisible check so spouse doesn't change ending
-			if (!spouse.isVisible())
+			if (!spouse.isVisible() && inventory.size()>=4)
+				spouse.ending(inventory.getInv());
+			if (!spouse.isVisible() && inventory.contains(invBrush))
 				spouse.ending(inventory.getInv());
 		
 		// Add visible items to the ItemList
@@ -278,7 +294,6 @@ public class BlobsOnlyJob extends Game implements MouseListener, IEventListener 
 		if ( Bed.isVisible() && !ItemList.contains(Bed))
 			ItemList.add(Bed);
 		
-		// Blob.collidesWith(Bed) && Blob.hasSomeItem()
 		if ( Blob.collidesWith(Bed) &&  spouse.getEnding() == "painted" )
 			gameMode = 7;
 		if ( Blob.collidesWith(Bed) && spouse.getEnding() == "paintedFirst" )
@@ -359,16 +374,6 @@ public class BlobsOnlyJob extends Game implements MouseListener, IEventListener 
 			gameMode = 1;
 		}
 		
-		if (Blob.getPosition().getX() <= -10 && gameMode == 2){
-			Blob.setPosition(500, (int)Blob.getPosition().getY());
-			gameMode = 22;
-		}
-		
-		if (Blob.getPosition().getX() >= 550 && gameMode == 22){
-			Blob.setPosition(0, (int)Blob.getPosition().getY());
-			gameMode = 2;
-		}
-		
 		if ( Blob.getPosition().getX() <= 0 && gameMode == 3 ){
 			Blob.setPosition(500, (int) Blob.getPosition().getY());
 			gameMode = 0;
@@ -383,13 +388,6 @@ public class BlobsOnlyJob extends Game implements MouseListener, IEventListener 
 			gameMode = 1;
 		}
 		
-		if (gameMode == 2){
-			System.out.println((((int)System.currentTimeMillis()-bar.getTime()))/1000);
-			if (((int)System.currentTimeMillis() - bar.getTime())/1000 > 3 && ((int)System.currentTimeMillis() - bar.getTime())/1000 < 100){
-				bar.dispatchEvent(new Event(Bar.BLUB,bar));
-			}
-		}
-		
 		//Game Over
 		if ( pressedKeys.contains("J"))
 			this.exitGame();
@@ -400,8 +398,42 @@ public class BlobsOnlyJob extends Game implements MouseListener, IEventListener 
 			inventory.update(pressedKeys);
 			inventory.setVisible(true);
 		} else if ( inventory != null && t.getElapsedTime()/1000 > 3) {inventory.setVisible(false);}
-				
-		System.out.println(t.getElapsedTime()/1000);
+			
+		if ( QuestModule != null )  {
+			if ( !QuestModule.contains(mq_header) ){
+				QuestModule.addItem(mq_header);
+			}
+			if (inventory.size()>0){
+				QuestModule.addItem(side_header);
+				QuestModule.removeItem(mq_paint);
+			}
+			if (inventory.size()==0)
+				QuestModule.addItem(mq_paint);
+			if (inventory.contains(invBrush)){
+				QuestModule.removeItem(mq_paint);
+				QuestModule.removeItem(side_header);
+			}
+			if ( inventory.contains(videoGame)){
+				QuestModule.addItem(game_quest);
+			}
+			/*
+			if ( inventory.contains(pint)){
+				QuestModule.addItem(drink_quest);
+			}
+			*/
+			if ( inventory.contains(art)){
+				QuestModule.addItem(art_quest);
+			}
+		}
+
+		
+		
+		//Open up the quest module
+				if (pressedKeys.contains("Q")){
+					QuestModule.update(pressedKeys);
+					QuestModule.setVisible(true);
+				} else if ( QuestModule != null && t.getElapsedTime()/1000 > 3) {QuestModule.setVisible(false);}
+		
 		frames++;
 
 	}
@@ -423,11 +455,6 @@ public class BlobsOnlyJob extends Game implements MouseListener, IEventListener 
 		}
 		if ( gameMode == 2 ) {
 			bar.draw(g);
-			right.draw(g);
-			left.draw(g);
-		}
-		if (gameMode == 22) {
-			triv.draw(g);
 			right.draw(g);
 		}
 		if ( gameMode == 3 ){
@@ -475,6 +502,7 @@ public class BlobsOnlyJob extends Game implements MouseListener, IEventListener 
 				Bed.draw(g);
 			}
 			inventory.draw(g);
+			QuestModule.draw(g);
 		}
 		
 		}
@@ -499,25 +527,7 @@ public class BlobsOnlyJob extends Game implements MouseListener, IEventListener 
 	
 	@Override
 	public void mouseReleased(MouseEvent e) {
-		// Will delete this after new functionality is tested to work
-		
-		// I put this in the main body
-		/*
-		if (this.gameMode == 0){
-			if (spouse.getEnding() == "painted")
-				//if (spouse.getObjectByID("painted").getGlobalHitBox().contains(e.getX(), e.getY()-25)){
-					gameMode = 7;
-				}
-			}
-		
-			if (spouse.getEnding() == "byeBye"){
-				if (spouse.getObjectByID("byeBye").getGlobalHitBox().contains(e.getX(), e.getY()-25)){
-					gameMode = 8;
-				}
-			}
-		}
-		*/
-		
+	
 		if (this.gameMode == 2){
 			for(ItemSprite i : bar.getBarItems()){
 				if(i.getGlobalHitBox().contains(e.getX(), e.getY()-25)) {
@@ -598,6 +608,7 @@ public class BlobsOnlyJob extends Game implements MouseListener, IEventListener 
 					 System.out.println("You clicked the Phone");
 					 i.dispatchEvent( new PopupEvent(PopupEvent.PHONE_PICKUP,i));
 					 popupMode = true;
+						QuestModule.addItem(drink_quest);
 				 }
 				 if ( i.getId() == "Brush" && disCount < 5  && !popupMode){
 					 i.dispatchEvent( new PopupEvent(brushes.get(disCount),i));					 
