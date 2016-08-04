@@ -148,6 +148,12 @@ public class BlobsOnlyJob extends Game implements MouseListener {
 	// spouses angry messages
 	int k = 0;
 	
+	// More distractions
+	DistractionSprite right = new DistractionSprite("right","right_arrow.png");
+	DistractionSprite left = new DistractionSprite("left","left_arrow.png");
+	DistractionSprite down = new DistractionSprite("down","down_arrow.png");
+	DistractionSprite up = new DistractionSprite("up","up_arrow.png");
+	
 	//Tweening
 	Tween test = new Tween(heyListen);
 	
@@ -177,6 +183,21 @@ public class BlobsOnlyJob extends Game implements MouseListener {
 			mSM.PlayMusic("dubstep");
 		}
 		
+		// Directions
+		down.setPosition(196,440);
+		up.setPosition(196,0);
+		right.setPosition(440,196);
+		left.setPosition(0, 196);
+
+		if (!down.isVisible())
+			down.setVisible(true);
+		if (!up.isVisible())
+			up.setVisible(true);
+		if (!right.isVisible())
+			right.setVisible(true);
+		if (!left.isVisible())
+			left.setVisible(true);
+		
 		//House Sprite(s)
 		if ( gameMode == 1 ) {
 			house.setVisible(true);
@@ -191,12 +212,15 @@ public class BlobsOnlyJob extends Game implements MouseListener {
 		
 		if ( gameMode == 0 ){
 			Brush.setVisible(true);
-			Phone.setVisible(true);			
+			Phone.setVisible(true);	
 		}
 		else{
 			Brush.setVisible(false);
 			Phone.setVisible(false);
 			}
+
+		if ( down.isVisible() )
+			System.out.println("askdjfh");
 		
 		house.setPosition(200,50);
 		roof.setPosition(200,50);
@@ -337,6 +361,8 @@ public class BlobsOnlyJob extends Game implements MouseListener {
 			gameMode = 1;
 		}
 		
+		
+		
 		//Game Over
 		if ( pressedKeys.contains("J"))
 			this.exitGame();
@@ -364,18 +390,25 @@ public class BlobsOnlyJob extends Game implements MouseListener {
 			// Rewritten for new House mechanic
 			for ( HouseSprite i : HouseList )
 				i.draw(g);
+			down.draw(g);
+			right.draw(g);
+			left.draw(g);
 		}
 		if ( gameMode == 2 ) {
 			bar.draw(g);
+			right.draw(g);
 		}
 		if ( gameMode == 3 ){
 			bedroom.draw(g);
+			left.draw(g);
 		}
 		if ( gameMode == 4 ){
 			museum.draw(g);
+			up.draw(g);
 		}
 		if ( gameMode == 5 ){
 			//street.draw(g);
+			left.draw(g);
 		}
 		if ( gameMode == 7 ){
 			g.drawString("Yay! You did it! You beat the thing!", 150, 220);
@@ -402,6 +435,8 @@ public class BlobsOnlyJob extends Game implements MouseListener {
 			Brush_Pickup.draw(g);
 			heyListen.draw(g);
 			spouse.draw(g);
+			right.draw(g);
+			down.draw(g);
 			// Bed is only drawn if spouse is there
 			if ( spouse.isVisible())
 				Bed.draw(g);
