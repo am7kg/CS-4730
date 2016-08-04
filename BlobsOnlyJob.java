@@ -1,5 +1,4 @@
-package edu.virginia.lab1test;
-
+package edu.virginia.BlobsOnlyJob;
 import java.awt.Graphics;
 import java.awt.Rectangle;
 import java.awt.event.KeyEvent;
@@ -26,6 +25,7 @@ import edu.virginia.engine.tweening.TweenableParam;
 import edu.virginia.engine.util.GameClock;
 import edu.virginia.enginge.events.DistractionEvent;
 import edu.virginia.enginge.events.Event;
+import edu.virginia.enginge.events.IEventListener;
 import edu.virginia.enginge.events.PopupEvent;
 
 
@@ -48,8 +48,9 @@ import edu.virginia.enginge.events.PopupEvent;
  *
  */
 
-public class BlobsOnlyJob extends Game implements MouseListener {
+public class BlobsOnlyJob extends Game implements MouseListener, IEventListener {
 
+	public static final String GET_ACHIEV = "get achievement";
 	
 	public BlobsOnlyJob() {
 		super("Blob's Only Job", 500, 500);
@@ -68,12 +69,17 @@ public class BlobsOnlyJob extends Game implements MouseListener {
 		Blob.setPosition(200, 200);
 		
 		//Music and Sound
-		mSM.LoadMusic("cute", "resources/cute.wav");
+		mSM.LoadMusic("cute", "resources/dubstep.wav");
 		mSM.PlayMusic("cute");
 		
 		mSM.LoadMusic("dubstep", "resources/dubstep.wav");
 		mSM.LoadSoundEffect("test", "resources/sfxtest.wav");
 				
+		exit.setParent(Game_Intro);
+		Game_Intro.addChild(exit);
+		ItemList.add(exit);
+		Game_Intro.setPosition(200, 200);
+		Game_Intro.setVisible(true);
 	}
 	
 	public static void main(String[] args) {
@@ -96,8 +102,10 @@ public class BlobsOnlyJob extends Game implements MouseListener {
 	
 	DisplayBox Phone_Pickup = new DisplayBox("Phone_Pickup", "phone_pickup_event.png");
 	DisplayBox Brush_Pickup = new DisplayBox("Brush_Pickup", "brush_first_event.png");
+	DisplayBox Game_Intro = new DisplayBox("game_intro", "game_intro.png");
+	ItemSprite exit = new ItemSprite("next", "exit.png");
 	
-	DistractionSprite heyListen = new DistractionSprite("heyListen");
+	DistractionSprite heyListen = new DistractionSprite("heyListen","right_arrow.png");
 	
 	private static ArrayList<String> brushes = new ArrayList<String>();
 
@@ -137,6 +145,7 @@ public class BlobsOnlyJob extends Game implements MouseListener {
 	ItemSprite pint = new ItemSprite("pint","item_pint.png");
 	ItemSprite videoGame = new ItemSprite("videoGame","item_videogame.png");
 	ItemSprite invBrush = new ItemSprite("brush","item_brush.png");	
+	ItemSprite invAchiev = new ItemSprite("achiev","item_achievement.png");
 	
 	//Each level object creation
 	BedRoom bedroom = new BedRoom("bedroom");
@@ -149,13 +158,14 @@ public class BlobsOnlyJob extends Game implements MouseListener {
 	int k = 0;
 	
 	// More distractions
-	DistractionSprite right = new DistractionSprite("right","right_arrow.png");
-	DistractionSprite left = new DistractionSprite("left","left_arrow.png");
-	DistractionSprite down = new DistractionSprite("down","down_arrow.png");
-	DistractionSprite up = new DistractionSprite("up","up_arrow.png");
+	 DistractionSprite right = new DistractionSprite("right","right_arrow.png");
+	 DistractionSprite left = new DistractionSprite("left","left_arrow.png");
+	 DistractionSprite down = new DistractionSprite("down","down_arrow.png");
+	 DistractionSprite up = new DistractionSprite("up","up_arrow.png");
 	
 	//Tweening
 	Tween test = new Tween(heyListen);
+	
 	
 	public void update(ArrayList<String> pressedKeys) {
 		super.update(pressedKeys);
@@ -166,13 +176,13 @@ public class BlobsOnlyJob extends Game implements MouseListener {
 				&& inventory != null ) { 
 						
 		if ( pressedKeys.contains(KeyEvent.getKeyText(KeyEvent.VK_UP))) 
-			Blob.getPosition().translate(0, -5);
+			Blob.getPosition().translate(0, -3);
 		if ( pressedKeys.contains(KeyEvent.getKeyText(KeyEvent.VK_DOWN)))
-			Blob.getPosition().translate(0, 5);
+			Blob.getPosition().translate(0, 3);
 		if ( pressedKeys.contains(KeyEvent.getKeyText(KeyEvent.VK_RIGHT)))
-			Blob.getPosition().translate(5, 0);
+			Blob.getPosition().translate(3, 0);
 		if ( pressedKeys.contains(KeyEvent.getKeyText(KeyEvent.VK_LEFT)))
-			Blob.getPosition().translate(-5, 0);
+			Blob.getPosition().translate(-3, 0);
 
 		
 		// Sound test
@@ -184,19 +194,19 @@ public class BlobsOnlyJob extends Game implements MouseListener {
 		}
 		
 		// Directions
-		down.setPosition(196,440);
-		up.setPosition(196,0);
-		right.setPosition(440,196);
-		left.setPosition(0, 196);
-
-		if (!down.isVisible())
-			down.setVisible(true);
-		if (!up.isVisible())
-			up.setVisible(true);
-		if (!right.isVisible())
-			right.setVisible(true);
-		if (!left.isVisible())
-			left.setVisible(true);
+		 down.setPosition(196,440);
+		 up.setPosition(196,0);
+		 right.setPosition(440,196);
+		 left.setPosition(0, 196);
+		 
+		 if (!down.isVisible())
+			 down.setVisible(true);
+		 if (!up.isVisible())
+		 	up.setVisible(true);
+		 if (!right.isVisible())
+		 	right.setVisible(true);
+		 if (!left.isVisible())
+		 	left.setVisible(true);
 		
 		//House Sprite(s)
 		if ( gameMode == 1 ) {
@@ -212,15 +222,15 @@ public class BlobsOnlyJob extends Game implements MouseListener {
 		
 		if ( gameMode == 0 ){
 			Brush.setVisible(true);
-			Phone.setVisible(true);	
+			Phone.setVisible(true);			
 		}
 		else{
 			Brush.setVisible(false);
 			Phone.setVisible(false);
 			}
-
+		
 		if ( down.isVisible() )
-			System.out.println("askdjfh");
+			//System.out.println("askdjfh");
 		
 		house.setPosition(200,50);
 		roof.setPosition(200,50);
@@ -361,8 +371,6 @@ public class BlobsOnlyJob extends Game implements MouseListener {
 			gameMode = 1;
 		}
 		
-		
-		
 		//Game Over
 		if ( pressedKeys.contains("J"))
 			this.exitGame();
@@ -437,6 +445,7 @@ public class BlobsOnlyJob extends Game implements MouseListener {
 			spouse.draw(g);
 			right.draw(g);
 			down.draw(g);
+			Game_Intro.draw(g);
 			// Bed is only drawn if spouse is there
 			if ( spouse.isVisible())
 				Bed.draw(g);
@@ -493,15 +502,9 @@ public class BlobsOnlyJob extends Game implements MouseListener {
 					}
 				}	
 			}
-		}
-		
-		if (this.gameMode == 3){
-			for (ItemSprite i : bedroom.getFurniture()){
-				if(i.getGlobalHitBox().contains(e.getX(), e.getY()-25)) {
-					bedroom.dispatchEvent(new Event(bedroom.CLEAN_MESS , i));
-					if(i.getId() == "dirty bed"){
-						inventory.addItem(this.videoGame);
-					}
+			for (DisplayBox d : bar.getBoxes()){
+				if(d.getGlobalHitBox().contains(e.getX(), e.getY()-25)) {
+					d.dispatchEvent(new Event(bar.DRINK, d));
 				}
 			}
 		}
@@ -514,6 +517,11 @@ public class BlobsOnlyJob extends Game implements MouseListener {
 					}
 				}	
 			}
+			for (DisplayBox d : museum.getBoxes()){
+				if(d.getGlobalHitBox().contains(e.getX(), e.getY()-25)) {
+					d.dispatchEvent(new Event(museum.ARTY, d));
+				}
+			}
 		}
 		
 		if (this.gameMode == 3){
@@ -522,6 +530,21 @@ public class BlobsOnlyJob extends Game implements MouseListener {
 					bedroom.dispatchEvent(new Event(bedroom.CLEAN_MESS , i));
 					if(i.getId() == "dirty bed"){
 						inventory.addItem(this.videoGame);
+						i.dispatchEvent(new Event(bedroom.INSTRUCT,i));
+					}
+					if (i.getId() == "tv"){
+						i.dispatchEvent(new Event(bedroom.INSTRUCT,i));
+					}
+					
+				}
+			}
+			for (DisplayBox d : bedroom.getBoxes()){
+				if(d.getGlobalHitBox().contains(e.getX(), e.getY()-25)) {
+					
+					d.dispatchEvent(new Event(bedroom.INSTRUCT, d));
+					if (d.getId() == "game_achievement"){
+						
+						inventory.addItem(invAchiev);
 					}
 				}
 			}
@@ -573,6 +596,15 @@ public class BlobsOnlyJob extends Game implements MouseListener {
 					 Remover.add(i);
 					 popupMode = false;
 				 }
+				 
+				 if (i.getId() == "exit"){
+					 i.getParent().setVisible(false);
+				 }
+				 if (i.getId() == "next"){
+					 i.getParent().setImage("game_intro2.png");
+					 i.setId("exit");
+				 }
+				 
 					 
 			 }	
 			}
@@ -609,6 +641,13 @@ public class BlobsOnlyJob extends Game implements MouseListener {
 	public void mouseExited(MouseEvent e) {
 		// TODO Auto-generated method stub
 		
+	}
+
+	@Override
+	public void handleEvent(Event event) {
+		if (event.getEventType() == this.GET_ACHIEV){
+			this.inventory.addItem(this.invAchiev);
+		}
 	}
 	
 }
